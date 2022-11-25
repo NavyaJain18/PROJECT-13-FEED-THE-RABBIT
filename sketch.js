@@ -1,160 +1,114 @@
-var PLAY = 1;
-var END = 0;
-var gameState = PLAY;
-
-var trex, trex_running, trex_collided;
-var ground, invisibleGround, groundImage;
-
-var cloud, cloudsGroup, cloudImage;
-var obstaclesGroup, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6;
-
-var score;
-var restart;
-var gameOver;
+var garden,rabbit,apple,orangeL,redL;
+var gardenImg,rabbitImg,carrotImg,orangeImg,redImg;
 
 
 function preload(){
-  trex_running = loadAnimation("trex1.png","trex2.png","trex3.png");
-  trex_collided = loadAnimation("trex_collided.png");
-  
-  groundImage = loadImage("ground2.png");
-  
-  cloudImage = loadImage("cloud.png");
-  
-  obstacle1 = loadImage("obstacle1.png");
-  obstacle2 = loadImage("obstacle2.png");
-  obstacle3 = loadImage("obstacle3.png");
-  obstacle4 = loadImage("obstacle4.png");
-  obstacle5 = loadImage("obstacle5.png");
-  obstacle6 = loadImage("obstacle6.png");
-  restartImage=loadImage("restart.png");
-  gameOverImage=loadImage("gameOver.png")
+  gardenImg = loadImage("garden.png");
+  rabbitImg = loadImage("rabbit.png");
+  appleImg = loadImage("apple.png");
+  orangeImg = loadImage("orangeLeaf.png");
+  redImg = loadImage("redImage.png");
 }
 
-function setup() {
-  createCanvas(600, 200);
-  
-  trex = createSprite(50,180,20,50);
-  trex.addAnimation("running", trex_running);
-  trex.addAnimation("collided" , trex_collided)
-  trex.scale = 0.5;
-  
-  ground = createSprite(200,180,400,20);
-  ground.addImage("ground",groundImage);
-  ground.x = ground.width /2;
-  ground.velocityX = -4;
-  
-  invisibleGround = createSprite(200,190,400,10);
-  invisibleGround.visible = false;
 
-  restart= createSprite(200,100); 
-  restart.addImage("restart",restartImage);
-  restart.scale=0.2
+function setup(){
+  
+  createCanvas(400,400);
+// Moving background
+garden=createSprite(200,200);
+garden.addImage(gardenImg);
 
-  gameOver = createSprite(200,200)
-  gameOver.addImage("gameOver",gameOverImage)
-  gameOver.scale=0.2
-  
-  // create Obstacles and Cloud groups
-  obstaclesGroup = new Group();
-  cloudsGroup = new Group();
-  
-  console.log("Hello" + 5);
-  
-  score = 0;
+
+//creating boy running
+rabbit = createSprite(160,340,20,20);
+rabbit.scale =0.09;
+rabbit.addImage(rabbitImg);
 }
 
 function draw() {
-  background(180);
-  text("Score: "+ score, 500,50);
-  score = score + Math.round(frameCount/60);
+  background(0);
   
-  if(gameState === PLAY){
-    //move the ground
-    ground.velocityX = -4;
-    
-  }
-  else if(gameState === END){
-    //stop the ground
-    ground.velocityX = 0;
+  // boy moving on Xaxis with mouse'
+  rabbit.x = World.mouseX;
   
-  }
+  edges= createEdgeSprites();
+  rabbit.collide(edges);
   
-  if(keyDown("space")&& trex.y >= 100) {
-    trex.velocityY = -13;
-  }
-  
-  trex.velocityY = trex.velocityY + 0.8
-  
-  if (ground.x < 0){
-    ground.x = ground.width/2;
-  }
-  
-  trex.collide(invisibleGround);
-  
-  //spawn the clouds
-  spawnClouds();
-  
-  //spawn obstacles on the ground
-  spawnObstacles();
-  
-  drawSprites();
-}
-
-function spawnObstacles(){
- if (frameCount % 60 === 0){
-   var obstacle = createSprite(400,165,10,40);
-   obstacle.velocityX = -6;
-
+   drawSprites();
    
-    // //generate random obstacles
-    var rand = Math.round(random(1,6));
-    switch(rand) {
-      case 1: obstacle.addImage(obstacle1);
-              break;
-      case 2: obstacle.addImage(obstacle2);
-              break;
-      case 3: obstacle.addImage(obstacle3);
-              break;
-      case 4: obstacle.addImage(obstacle4);
-              break;
-      case 5: obstacle.addImage(obstacle5);
-              break;
-      case 6: obstacle.addImage(obstacle6);
-              break;
-      default: break;
+  
+// var select_sprites = Math(random(1,3));
+
+// var select_sprites = Math.random(random(1,3));
+
+// var select_sprites = Math.round(1,3);
+
+ var select_sprites = Math.round(random(1,3));
+
+  
+  // if (frameCount % 50 == 0) {
+  //   if (select_sprites == 1) {
+  //     createApples();
+  //   } else if (select_sprites == 2) {
+  //     createOrange();
+  //   }else {
+  //     createRed();
+  //   }
+  // }
+
+   if (frameCount % 80 == 0) {
+    if (select_sprites == 1) {
+       createApples();
+    } else if (select_sprites == 2) {
+      createOrange();
     }
-   
-    //assign scale and lifetime to the obstacle           
-    obstacle.scale = 0.5;
-    obstacle.lifetime = 300;
-   
-   //adding obstacles to the group
-   obstaclesGroup.add(obstacle);
- }
+   }
+
+  // if (frameCount / 80 == 0) {
+  //   if (select_sprites == 1) {
+  //     createApples();
+  //   } else if (select_sprites == 2) {
+  //     createOrange();
+  //   }else {
+  //     createRed();
+  //   }
+  // }
+
+  // if (frameCount % 80 = 0) {
+  //   if (select_sprites == 1) {
+  //     createApples();
+  //   } else if (select_sprites == 2) {
+  //     createOrange();
+  //   }else {
+  //     createRed();
+  //   }
+  // }
+
+
+
 }
 
-
-
-
-function spawnClouds() {
-  //write code here to spawn the clouds
-  if (frameCount % 60 === 0) {
-     cloud = createSprite(600,100,40,10);
-    cloud.y = Math.round(random(10,60));
-    cloud.addImage(cloudImage);
-    cloud.scale = 0.5;
-    cloud.velocityX = -3;
-    
-     //assign lifetime to the variable
-    cloud.lifetime = 134;
-    
-    //adjust the depth
-    cloud.depth = trex.depth;
-    trex.depth = trex.depth + 1;
-    
-    //adding cloud to the group
-   cloudsGroup.add(cloud);
-  }
+function createApples() {
+apple = createSprite(random(50, 350),40, 10, 10);
+apple.addImage(appleImg);
+apple.scale=0.07;
+apple.velocityY = 3;
+apple.lifetime = 150;
   
+}
+
+function createOrange() {
+orangeL = createSprite(random(50, 350),40, 10, 10);
+orangeL.addImage(orangeImg);
+orangeL.scale=0.08;
+orangeL.velocityY = 3;
+orangeL.lifetime = 150;
+}
+
+function createRed() {
+redL = createSprite(random(50, 350),40, 10, 10);
+redL.addImage(redImg);
+redL.scale=0.06;
+  redL.velocityY = 3;
+  redL.lifetime = 150;
 }
